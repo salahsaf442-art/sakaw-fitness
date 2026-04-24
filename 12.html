@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>مساعد التمرين - النسخة الاحترافية</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            padding: 50px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            color: #1a73e8;
+            text-align: center;
+        }
+
+        input {
+            width: 92%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .btn-clear {
+            background-color: #dc3545;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        li {
+            background: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-right: 5px solid #1a73e8;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>تسجيل التمارين (حفظ دائم) 💾</h2>
+
+        <input type="text" id="exName" placeholder="اسم التمرين">
+        <input type="number" id="exWeight" placeholder="الوزن">
+
+        <button onclick="addEntry()">إضافة التمرين</button>
+        <button class="btn-clear" onclick="clearData()">مسح كل البيانات</button>
+
+        <ul id="logList"></ul>
+    </div>
+
+    <script>
+        // 1. عند فتح الصفحة: استرجاع البيانات المحفوظة (لو موجودة)
+        // بنستخدم JSON.parse عشان نرجع النص لـ Array تاني
+        let workoutLog = JSON.parse(localStorage.getItem('myWorkouts')) || [];
+
+        // أول ما الصفحة تفتح، بنعرض البيانات المحفوظة فوراً
+        updateUI();
+
+        function addEntry() {
+        const name = document.getElementById('exName').value;
+        const weight = document.getElementById('exWeight').value;
+
+        if (name === "" || weight === "") {
+        alert("سجل البيانات الأول يا بطل!");
+        return;
+        }
+
+        workoutLog.push({ name: name, weight: weight });
+
+        // 2. الحفظ في الـ LocalStorage
+        // لازم نحول الـ Array لنص (String) باستخدام JSON.stringify
+        localStorage.setItem('myWorkouts', JSON.stringify(workoutLog));
+
+        updateUI();
+
+        document.getElementById('exName').value = "";
+        document.getElementById('exWeight').value = "";
+        }
+
+        function updateUI() {
+        const list = document.getElementById('logList');
+        list.innerHTML = "";
+
+        workoutLog.forEach((item) => {
+        list.innerHTML += `<li>
+        <span>${item.name}</span>
+        <strong>${item.weight} كيلو</strong>
+        </li>`;
+        });
+        }
+
+        // وظيفة لمسح كل البيانات من الذاكرة
+        function clearData() {
+        if (confirm("هل تريد مسح كل التمارين المسجلة؟")) {
+        localStorage.removeItem('myWorkouts');
+        workoutLog = [];
+        updateUI();
+        }
+        }
+    </script>
+
+</body>
+</html>
