@@ -3,227 +3,337 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مدرب العضلات الذكي</title>
+    <title>تطبيق الوحش - Gym Mode Pro</title>
     <style>
         :root {
-            --primary: #1a73e8;
-            --secondary: #607d8b;
-            --accent: #ff9800;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --neon-blue: #00d2ff;
+            --neon-green: #39ff14;
+            --neon-purple: #bc13fe;
+            --neon-orange: #ff9d00;
+            --neon-pink: #ff007f;
+            --neon-cyan: #00ffcc;
+            --text-main: #f8fafc;
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
         }
 
         .container {
-            max-width: 500px;
-            margin: auto;
-            background: white;
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            border-radius: 30px;
             padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 30px;
         }
 
-        /* تنسيق مربعات العضلات */
+        h2 { 
+            text-align: center; 
+            font-size: 26px; 
+            background: linear-gradient(to left, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-top: 10px;
+            margin-bottom: 25px;
+            font-weight: 900;
+        }
+
+        /* شبكة العضلات الحديثة */
         .muscle-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 25px;
         }
 
         .muscle-card {
-            border: 2px solid #eee;
-            border-radius: 12px;
-            padding: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 15px 5px;
             text-align: center;
             cursor: pointer;
-            transition: 0.3s;
-            background: #fff;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .muscle-card img {
-            width: 40px;
-            height: 40px;
-            display: block;
-            margin: 0 auto 5px;
+        .muscle-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+        .muscle-name { font-size: 13px; font-weight: bold; color: #94a3b8; }
+
+        /* تأثيرات النيون عند التنشيط */
+        .muscle-card.active { transform: translateY(-5px); }
+        
+        .muscle-card.active[data-m="صدر"] { border-color: var(--neon-pink); box-shadow: 0 0 15px var(--neon-pink); background: rgba(255, 0, 127, 0.1); }
+        .muscle-card.active[data-m="ظهر"] { border-color: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); background: rgba(57, 255, 20, 0.1); }
+        .muscle-card.active[data-m="رجل"] { border-color: var(--neon-orange); box-shadow: 0 0 15px var(--neon-orange); background: rgba(255, 157, 0, 0.1); }
+        .muscle-card.active[data-m="كتف"] { border-color: var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); background: rgba(188, 19, 254, 0.1); }
+        .muscle-card.active[data-m="ذراع"] { border-color: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); background: rgba(0, 210, 255, 0.1); }
+        .muscle-card.active[data-m="بطن"] { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan); background: rgba(0, 255, 204, 0.1); }
+
+        .muscle-card.active .muscle-name { color: #fff; }
+
+        /* منطقة الإدخال */
+        .input-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .muscle-card span { font-size: 12px; font-weight: bold; }
+        label { display: block; font-size: 12px; color: #94a3b8; margin: 10px 5px 5px 0; }
 
-        .muscle-card.active {
-            border-color: var(--primary);
-            background: #e8f0fe;
-            transform: scale(1.05);
+        input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            box-sizing: border-box;
         }
 
-        /* حقول الإدخال */
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 15px;
-        }
+        input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 210, 255, 0.2); }
 
-        input, select {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-        }
+        .row { display: flex; gap: 10px; margin-top: 10px; }
+        .col { flex: 1; }
 
-        button.add-btn {
-            background: var(--primary);
+        .btn-add {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 10px;
+            border-radius: 15px;
             font-weight: bold;
+            font-size: 16px;
+            margin-top: 20px;
             cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: 0.2s;
         }
+
+        .btn-add:active { transform: scale(0.98); }
 
         /* السجل */
-        .log-section { margin-top: 30px; }
+        h3 { font-size: 18px; margin: 10px 10px 15px 0; color: #cbd5e1; border-right: 4px solid var(--neon-blue); padding-right: 10px; }
+
         .log-item {
-            background: #fff;
-            border: 1px solid #eee;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 15px;
+            padding: 18px;
+            border-radius: 20px;
             position: relative;
-            border-right: 5px solid var(--accent);
+            animation: slideIn 0.3s ease;
         }
 
-        .log-date { font-size: 11px; color: #888; }
-        .log-title { font-weight: bold; color: #333; margin: 5px 0; }
-        .log-stats { font-size: 13px; color: #555; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
 
-        .empty-msg { text-align: center; color: #999; font-size: 14px; padding: 20px; }
+        .log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .log-date { font-size: 11px; color: #64748b; }
+        .log-muscle-tag { font-size: 10px; padding: 3px 10px; border-radius: 20px; font-weight: bold; border: 1px solid currentColor; }
+        .log-ex-name { font-size: 18px; font-weight: bold; color: #fff; display: block; }
+        .log-details { font-size: 15px; color: #94a3b8; margin-top: 8px; }
+        .log-details b { color: var(--neon-blue); font-size: 16px; }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 20px;
+            position: absolute;
+            left: 15px;
+            bottom: 15px;
+            padding: 5px;
+        }
+
+        .empty-msg { text-align: center; color: #64748b; padding: 40px 0; font-style: italic; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2 style="text-align:center;">🏋️‍♂️ مساعدي الرياضي</h2>
+    <h2>🔥 الوحش الرياضي</h2>
 
     <div class="muscle-grid" id="muscleSelector">
-        <div class="muscle-card" onclick="selectMuscle('صدر', this)">
-            <img src="https://cdn-icons-png.flaticon.com/512/2548/2548530.png" alt="صدر">
-            <span>صدر</span>
+        <div class="muscle-card" data-m="صدر" onclick="selectMuscle('صدر', this)">
+            <span class="muscle-icon">🍒</span>
+            <span class="muscle-name">صدر</span>
         </div>
-        <div class="muscle-card" onclick="selectMuscle('ظهر', this)">
-            <img src="https://cdn-icons-png.flaticon.com/512/2548/2548537.png" alt="ظهر">
-            <span>ظهر</span>
+        <div class="muscle-card" data-m="ظهر" onclick="selectMuscle('ظهر', this)">
+            <span class="muscle-icon">🦅</span>
+            <span class="muscle-name">ظهر</span>
         </div>
-        <div class="muscle-card" onclick="selectMuscle('رجل', this)">
-            <img src="https://cdn-icons-png.flaticon.com/512/2548/2548525.png" alt="رجل">
-            <span>رجل</span>
+        <div class="muscle-card" data-m="رجل" onclick="selectMuscle('رجل', this)">
+            <span class="muscle-icon">🦵</span>
+            <span class="muscle-name">رجل</span>
         </div>
-        <div class="muscle-card" onclick="selectMuscle('كتف', this)">
-            <img src="https://cdn-icons-png.flaticon.com/512/2548/2548535.png" alt="كتف">
-            <span>كتف</span>
+        <div class="muscle-card" data-m="كتف" onclick="selectMuscle('كتف', this)">
+            <span class="muscle-icon">🛡️</span>
+            <span class="muscle-name">كتف</span>
         </div>
-        <div class="muscle-card" onclick="selectMuscle('باي/تراي', this)">
-            <img src="https://cdn-icons-png.flaticon.com/512/2548/2548512.png" alt="ذراع">
-            <span>ذراع</span>
+        <div class="muscle-card" data-m="ذراع" onclick="selectMuscle('ذراع', this)">
+            <span class="muscle-icon">💪</span>
+            <span class="muscle-name">ذراع</span>
         </div>
-        <div class="muscle-card" onclick="selectMuscle('بطن', this)">
-            <img src="https://cdn-icons-png.flaticon.com/512/2548/2548532.png" alt="بطن">
-            <span>بطن</span>
+        <div class="muscle-card" data-m="بطن" onclick="selectMuscle('بطن', this)">
+            <span class="muscle-icon">🍫</span>
+            <span class="muscle-name">بطن</span>
         </div>
     </div>
 
-    <div class="form-group">
-        <input type="date" id="exDate">
-        <input type="text" id="exName" placeholder="اسم التمرين">
-        <div style="display: flex; gap: 10px;">
-            <input type="number" id="exWeight" placeholder="الوزن (كجم)" style="flex:1;">
-            <input type="number" id="exReps" placeholder="العدات" style="flex:1;">
+    <div class="input-box">
+        <div class="col">
+            <label>تاريخ التمرين</label>
+            <input type="date" id="exDate">
         </div>
-        <button class="add-btn" onclick="addEntry()">حفظ التمرين</button>
+        
+        <div class="col">
+            <label>اسم التمرين</label>
+            <input type="text" id="exName" placeholder="مثال: تبادل دمبل..">
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label>الوزن (kg)</label>
+                <input type="number" id="exWeight" placeholder="0">
+            </div>
+            <div class="col">
+                <label>العدات</label>
+                <input type="number" id="exReps" placeholder="0">
+            </div>
+        </div>
+
+        <button class="btn-add" onclick="addEntry()">إضافة للسجل 💪</button>
     </div>
 
-    <div class="log-section">
-        <h3 id="viewTitle">آخر تمارين (الكل)</h3>
-        <div id="logList"></div>
-    </div>
+    <h3 id="listTitle">سجل النشاط العام</h3>
+    <div id="logList"></div>
 </div>
 
 <script>
-    let workoutLog = JSON.parse(localStorage.getItem('proWorkoutLog')) || [];
+    // جلب البيانات من ذاكرة المتصفح
+    let workoutLog = JSON.parse(localStorage.getItem('monsterGymLog')) || [];
     let selectedMuscle = "";
 
-    // ضبط تاريخ اليوم تلقائياً
+    // تعيين التاريخ ليومنا هذا تلقائياً
     document.getElementById('exDate').valueAsDate = new Date();
 
-    function selectMuscle(muscle, element) {
+    // تعريف ألوان النيون لكل عضلة
+    const muscleThemes = {
+        'صدر': '#ff007f', 'ظهر': '#39ff14', 'رجل': '#ff9d00',
+        'كتف': '#bc13fe', 'ذراع': '#00d2ff', 'بطن': '#00ffcc'
+    };
+
+    // وظيفة اختيار العضلة
+    function selectMuscle(muscle, el) {
         selectedMuscle = muscle;
-        // تغيير شكل الاختيار
+        // تحديث شكل البطاقات
         document.querySelectorAll('.muscle-card').forEach(c => c.classList.remove('active'));
-        element.classList.add('active');
+        el.classList.add('active');
         
-        document.getElementById('viewTitle').innerText = `تمارين عضلة: ${muscle}`;
+        // تحديث العنوان وفلترة القائمة
+        document.getElementById('listTitle').innerText = `تمارين عضلة: ${muscle}`;
         updateUI(muscle);
     }
 
+    // وظيفة إضافة تمرين جديد
     function addEntry() {
         const date = document.getElementById('exDate').value;
         const name = document.getElementById('exName').value.trim();
         const weight = document.getElementById('exWeight').value;
         const reps = document.getElementById('exReps').value;
 
-        if (!selectedMuscle) { alert("اختار العضلة الأول يا بطل!"); return; }
-        if (!name || !weight) { alert("كمل البيانات!"); return; }
+        if (!selectedMuscle) {
+            alert("اختار العضلة الأول يا وحش! 🏋️‍♂️");
+            return;
+        }
+        if (!name || !weight || !reps) {
+            alert("اكتب اسم التمرين والوزن والعدات");
+            return;
+        }
 
-        const entry = {
+        // إضافة البيانات في أول القائمة
+        workoutLog.unshift({
             id: Date.now(),
             muscle: selectedMuscle,
-            date: date,
-            name: name,
-            weight: weight,
-            reps: reps
-        };
+            date,
+            name,
+            weight,
+            reps
+        });
 
-        workoutLog.unshift(entry);
-        localStorage.setItem('proWorkoutLog', JSON.stringify(workoutLog));
+        // حفظ وتحديث
+        saveData();
+        updateUI(selectedMuscle);
         
-        // مسح الحقول وبقاء العضلة مختارة لرؤية التحديث
+        // مسح الحقول
         document.getElementById('exName').value = "";
         document.getElementById('exWeight').value = "";
         document.getElementById('exReps').value = "";
-        updateUI(selectedMuscle);
     }
 
+    // وظيفة حذف تمرين
+    function deleteItem(id) {
+        if(confirm("عايز تمسح التمرين ده من السجل؟")) {
+            workoutLog = workoutLog.filter(item => item.id !== id);
+            saveData();
+            updateUI(selectedMuscle);
+        }
+    }
+
+    function saveData() {
+        localStorage.setItem('monsterGymLog', JSON.stringify(workoutLog));
+    }
+
+    // وظيفة تحديث الواجهة
     function updateUI(filter = "") {
         const list = document.getElementById('logList');
         list.innerHTML = "";
 
-        // تصفية التمارين بناءً على العضلة المختارة
-        const filteredData = filter 
-            ? workoutLog.filter(item => item.muscle === filter)
-            : workoutLog;
+        // تصفية البيانات حسب العضلة المختارة (أو عرض الكل)
+        const data = filter ? workoutLog.filter(i => i.muscle === filter) : workoutLog;
 
-        if (filteredData.length === 0) {
-            list.innerHTML = `<div class="empty-msg">لا يوجد سجل لهذه العضلة حتى الآن.. شد حيلك!</div>`;
+        if (data.length === 0) {
+            list.innerHTML = `<div class="empty-msg">لا يوجد سجلات لهذه العضلة حالياً.. ابدأ أول تمرينة!</div>`;
             return;
         }
 
-        filteredData.forEach(item => {
+        data.forEach(item => {
+            const color = muscleThemes[item.muscle];
             const div = document.createElement('div');
             div.className = 'log-item';
+            div.style.borderRight = `5px solid ${color}`;
             div.innerHTML = `
-                <div class="log-date">📅 ${item.date}</div>
-                <div class="log-title">${item.name} (${item.muscle})</div>
-                <div class="log-stats">🏋️ الوزن: ${item.weight} كجم | 🔢 العدات: ${item.reps}</div>
+                <div class="log-header">
+                    <span class="log-date">📅 ${item.date}</span>
+                    <span class="log-muscle-tag" style="color:${color}; border-color:${color}">${item.muscle}</span>
+                </div>
+                <span class="log-ex-name">${item.name}</span>
+                <div class="log-details">
+                    وزن: <b>${item.weight}</b> kg &nbsp;&nbsp; | &nbsp;&nbsp; عدات: <b>${item.reps}</b>
+                </div>
+                <button class="delete-btn" onclick="deleteItem(${item.id})">🗑️</button>
             `;
             list.appendChild(div);
         });
     }
 
-    // إظهار الكل في البداية
+    // التشغيل الأول لإظهار أي بيانات قديمة
     updateUI();
 </script>
 
