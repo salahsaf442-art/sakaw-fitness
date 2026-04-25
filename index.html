@@ -3,195 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مساعد التمرين</title>
-
+    <title>مدرب العضلات الذكي</title>
     <style>
-        body {
-            font-family: sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            padding: 15px;
-            margin: 0;
+        :root {
+            --primary: #1a73e8;
+            --secondary: #607d8b;
+            --accent: #ff9800;
         }
 
-        .card {
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
             background: white;
             padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* تنسيق مربعات العضلات */
+        .muscle-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .muscle-card {
+            border: 2px solid #eee;
             border-radius: 12px;
-            width: 100%;
-            max-width: 100%;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        h2 {
-            color: #1a73e8;
+            padding: 10px;
             text-align: center;
-            font-size: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            background: #fff;
         }
 
-        input {
-            width: 100%;
+        .muscle-card img {
+            width: 40px;
+            height: 40px;
+            display: block;
+            margin: 0 auto 5px;
+        }
+
+        .muscle-card span { font-size: 12px; font-weight: bold; }
+
+        .muscle-card.active {
+            border-color: var(--primary);
+            background: #e8f0fe;
+            transform: scale(1.05);
+        }
+
+        /* حقول الإدخال */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        input, select {
             padding: 12px;
-            margin: 8px 0;
             border: 1px solid #ddd;
             border-radius: 8px;
-            box-sizing: border-box;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #1a73e8;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .btn-clear {
-            background-color: #dc3545;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-            margin-top: 20px;
-        }
-
-        li {
-            background: #f8f9fa;
-            padding: 10px;
-            margin-bottom: 8px;
-            border-right: 5px solid #1a73e8;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             font-size: 14px;
-            gap: 10px;
         }
 
-        .delete-btn {
-            background: #dc3545;
+        button.add-btn {
+            background: var(--primary);
             color: white;
             border: none;
-            border-radius: 6px;
-            padding: 5px 10px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
             cursor: pointer;
-            font-size: 12px;
         }
 
-        @media (max-width: 400px) {
-            h2 {
-                font-size: 18px;
-            }
-
-            button {
-                padding: 10px;
-                font-size: 14px;
-            }
+        /* السجل */
+        .log-section { margin-top: 30px; }
+        .log-item {
+            background: #fff;
+            border: 1px solid #eee;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            position: relative;
+            border-right: 5px solid var(--accent);
         }
+
+        .log-date { font-size: 11px; color: #888; }
+        .log-title { font-weight: bold; color: #333; margin: 5px 0; }
+        .log-stats { font-size: 13px; color: #555; }
+
+        .empty-msg { text-align: center; color: #999; font-size: 14px; padding: 20px; }
     </style>
 </head>
-
 <body>
 
-<div class="card">
-    <h2>تسجيل التمارين</h2>
+<div class="container">
+    <h2 style="text-align:center;">🏋️‍♂️ مساعدي الرياضي</h2>
 
-    <input type="text" id="exName" placeholder="اسم التمرين واسم العضلة">
-    <input type="number" id="exWeight" placeholder="الوزن بالكيلو">
+    <div class="muscle-grid" id="muscleSelector">
+        <div class="muscle-card" onclick="selectMuscle('صدر', this)">
+            <img src="https://cdn-icons-png.flaticon.com/512/2548/2548530.png" alt="صدر">
+            <span>صدر</span>
+        </div>
+        <div class="muscle-card" onclick="selectMuscle('ظهر', this)">
+            <img src="https://cdn-icons-png.flaticon.com/512/2548/2548537.png" alt="ظهر">
+            <span>ظهر</span>
+        </div>
+        <div class="muscle-card" onclick="selectMuscle('رجل', this)">
+            <img src="https://cdn-icons-png.flaticon.com/512/2548/2548525.png" alt="رجل">
+            <span>رجل</span>
+        </div>
+        <div class="muscle-card" onclick="selectMuscle('كتف', this)">
+            <img src="https://cdn-icons-png.flaticon.com/512/2548/2548535.png" alt="كتف">
+            <span>كتف</span>
+        </div>
+        <div class="muscle-card" onclick="selectMuscle('باي/تراي', this)">
+            <img src="https://cdn-icons-png.flaticon.com/512/2548/2548512.png" alt="ذراع">
+            <span>ذراع</span>
+        </div>
+        <div class="muscle-card" onclick="selectMuscle('بطن', this)">
+            <img src="https://cdn-icons-png.flaticon.com/512/2548/2548532.png" alt="بطن">
+            <span>بطن</span>
+        </div>
+    </div>
 
-    <button onclick="addEntry()">إضافة التمرين</button>
-    <button class="btn-clear" onclick="clearData()">مسح كل البيانات</button>
+    <div class="form-group">
+        <input type="date" id="exDate">
+        <input type="text" id="exName" placeholder="اسم التمرين">
+        <div style="display: flex; gap: 10px;">
+            <input type="number" id="exWeight" placeholder="الوزن (كجم)" style="flex:1;">
+            <input type="number" id="exReps" placeholder="العدات" style="flex:1;">
+        </div>
+        <button class="add-btn" onclick="addEntry()">حفظ التمرين</button>
+    </div>
 
-    <ul id="logList"></ul>
+    <div class="log-section">
+        <h3 id="viewTitle">آخر تمارين (الكل)</h3>
+        <div id="logList"></div>
+    </div>
 </div>
 
 <script>
-    let workoutLog = JSON.parse(localStorage.getItem('myWorkouts')) || [];
+    let workoutLog = JSON.parse(localStorage.getItem('proWorkoutLog')) || [];
+    let selectedMuscle = "";
 
-    updateUI();
+    // ضبط تاريخ اليوم تلقائياً
+    document.getElementById('exDate').valueAsDate = new Date();
 
-    function addEntry() {
-        const nameInput = document.getElementById('exName');
-        const weightInput = document.getElementById('exWeight');
-
-        const name = nameInput.value.trim();
-        const weight = parseFloat(weightInput.value);
-
-        if (name === "" || isNaN(weight)) {
-            alert("سجل البيانات الأول يا بطل!");
-            return;
-        }
-
-        if (weight <= 0) {
-            alert("الوزن لازم يكون أكبر من صفر");
-            return;
-        }
-
-        workoutLog.push({
-            name: name,
-            weight: weight,
-            date: new Date().toLocaleDateString()
-        });
-
-        localStorage.setItem('myWorkouts', JSON.stringify(workoutLog));
-
-        updateUI();
-
-        nameInput.value = "";
-        weightInput.value = "";
-        nameInput.focus();
+    function selectMuscle(muscle, element) {
+        selectedMuscle = muscle;
+        // تغيير شكل الاختيار
+        document.querySelectorAll('.muscle-card').forEach(c => c.classList.remove('active'));
+        element.classList.add('active');
+        
+        document.getElementById('viewTitle').innerText = `تمارين عضلة: ${muscle}`;
+        updateUI(muscle);
     }
 
-    function updateUI() {
+    function addEntry() {
+        const date = document.getElementById('exDate').value;
+        const name = document.getElementById('exName').value.trim();
+        const weight = document.getElementById('exWeight').value;
+        const reps = document.getElementById('exReps').value;
+
+        if (!selectedMuscle) { alert("اختار العضلة الأول يا بطل!"); return; }
+        if (!name || !weight) { alert("كمل البيانات!"); return; }
+
+        const entry = {
+            id: Date.now(),
+            muscle: selectedMuscle,
+            date: date,
+            name: name,
+            weight: weight,
+            reps: reps
+        };
+
+        workoutLog.unshift(entry);
+        localStorage.setItem('proWorkoutLog', JSON.stringify(workoutLog));
+        
+        // مسح الحقول وبقاء العضلة مختارة لرؤية التحديث
+        document.getElementById('exName').value = "";
+        document.getElementById('exWeight').value = "";
+        document.getElementById('exReps').value = "";
+        updateUI(selectedMuscle);
+    }
+
+    function updateUI(filter = "") {
         const list = document.getElementById('logList');
         list.innerHTML = "";
 
-        workoutLog.forEach((item, index) => {
-            const li = document.createElement("li");
+        // تصفية التمارين بناءً على العضلة المختارة
+        const filteredData = filter 
+            ? workoutLog.filter(item => item.muscle === filter)
+            : workoutLog;
 
-            const nameSpan = document.createElement("span");
-            nameSpan.textContent = item.name;
+        if (filteredData.length === 0) {
+            list.innerHTML = `<div class="empty-msg">لا يوجد سجل لهذه العضلة حتى الآن.. شد حيلك!</div>`;
+            return;
+        }
 
-            const weightStrong = document.createElement("strong");
-            weightStrong.textContent = item.weight + " كيلو";
-
-            const deleteBtn = document.createElement("button");
-            deleteBtn.textContent = "حذف";
-            deleteBtn.className = "delete-btn";
-
-            deleteBtn.onclick = () => {
-                workoutLog.splice(index, 1);
-                localStorage.setItem('myWorkouts', JSON.stringify(workoutLog));
-                updateUI();
-            };
-
-            li.appendChild(nameSpan);
-            li.appendChild(weightStrong);
-            li.appendChild(deleteBtn);
-
-            list.appendChild(li);
+        filteredData.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'log-item';
+            div.innerHTML = `
+                <div class="log-date">📅 ${item.date}</div>
+                <div class="log-title">${item.name} (${item.muscle})</div>
+                <div class="log-stats">🏋️ الوزن: ${item.weight} كجم | 🔢 العدات: ${item.reps}</div>
+            `;
+            list.appendChild(div);
         });
     }
 
-    function clearData() {
-        if (confirm("هل تريد مسح كل التمارين؟")) {
-            localStorage.removeItem('myWorkouts');
-            workoutLog = [];
-            updateUI();
-        }
-    }
+    // إظهار الكل في البداية
+    updateUI();
 </script>
 
 </body>
