@@ -1,341 +1,194 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sakaw- Gym Mode Pro</title>
-    <style>
-        :root {
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --neon-blue: #00d2ff;
-            --neon-green: #39ff14;
-            --neon-purple: #bc13fe;
-            --neon-orange: #ff9d00;
-            --neon-pink: #ff007f;
-            --neon-cyan: #00ffcc;
-            --text-main: #f8fafc;
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 480px;
-            background: var(--card-bg);
-            border-radius: 30px;
-            padding: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            border: 1px solid rgba(255,255,255,0.05);
-            margin-bottom: 30px;
-        }
-
-        h2 { 
-            text-align: center; 
-            font-size: 26px; 
-            background: linear-gradient(to left, var(--neon-blue), var(--neon-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-top: 10px;
-            margin-bottom: 25px;
-            font-weight: 900;
-        }
-
-        /* شبكة العضلات الحديثة */
-        .muscle-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-
-        .muscle-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 2px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            padding: 15px 5px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .muscle-icon { font-size: 32px; display: block; margin-bottom: 8px; }
-        .muscle-name { font-size: 13px; font-weight: bold; color: #94a3b8; }
-
-        /* تأثيرات النيون عند التنشيط */
-        .muscle-card.active { transform: translateY(-5px); }
-        
-        .muscle-card.active[data-m="صدر"] { border-color: var(--neon-pink); box-shadow: 0 0 15px var(--neon-pink); background: rgba(255, 0, 127, 0.1); }
-        .muscle-card.active[data-m="ظهر"] { border-color: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); background: rgba(57, 255, 20, 0.1); }
-        .muscle-card.active[data-m="رجل"] { border-color: var(--neon-orange); box-shadow: 0 0 15px var(--neon-orange); background: rgba(255, 157, 0, 0.1); }
-        .muscle-card.active[data-m="كتف"] { border-color: var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); background: rgba(188, 19, 254, 0.1); }
-        .muscle-card.active[data-m="ذراع"] { border-color: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); background: rgba(0, 210, 255, 0.1); }
-        .muscle-card.active[data-m="بطن"] { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan); background: rgba(0, 255, 204, 0.1); }
-
-        .muscle-card.active .muscle-name { color: #fff; }
-
-        /* منطقة الإدخال */
-        .input-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 25px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        label { display: block; font-size: 12px; color: #94a3b8; margin: 10px 5px 5px 0; }
-
-        input {
-            width: 100%;
-            padding: 14px;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            color: white;
-            font-size: 15px;
-            outline: none;
-            box-sizing: border-box;
-        }
-
-        input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 210, 255, 0.2); }
-
-        .row { display: flex; gap: 10px; margin-top: 10px; }
-        .col { flex: 1; }
-
-        .btn-add {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
-            color: white;
-            border: none;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 16px;
-            margin-top: 20px;
-            cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            transition: 0.2s;
-        }
-
-        .btn-add:active { transform: scale(0.98); }
-
-        /* السجل */
-        h3 { font-size: 18px; margin: 10px 10px 15px 0; color: #cbd5e1; border-right: 4px solid var(--neon-blue); padding-right: 10px; }
-
-        .log-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            margin-bottom: 15px;
-            padding: 18px;
-            border-radius: 20px;
-            position: relative;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-
-        .log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .log-date { font-size: 11px; color: #64748b; }
-        .log-muscle-tag { font-size: 10px; padding: 3px 10px; border-radius: 20px; font-weight: bold; border: 1px solid currentColor; }
-        .log-ex-name { font-size: 18px; font-weight: bold; color: #fff; display: block; }
-        .log-details { font-size: 15px; color: #94a3b8; margin-top: 8px; }
-        .log-details b { color: var(--neon-blue); font-size: 16px; }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            color: #ef4444;
-            cursor: pointer;
-            font-size: 20px;
-            position: absolute;
-            left: 15px;
-            bottom: 15px;
-            padding: 5px;
-        }
-
-        .empty-msg { text-align: center; color: #64748b; padding: 40px 0; font-style: italic; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeForge++ | تعلم C++ بأسلوب المحاربين</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Cairo:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Layout CSS -->
+  <link rel="stylesheet" href="layout.css">
+  <!-- Neon Theme CSS -->
+  <link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
-<div class="container">
-    <h2>🔥اختار ال تمارين يا كوتش و يلا نبدا</h2>
+  <!-- ============================================================
+       HEADER: شريط التنقل العلوي + معلومات المستخدم
+  ============================================================ -->
+  <header class="main-header">
+    <div class="header-inner">
+      <!-- Logo -->
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">Code<span class="neon-accent">Forge</span><span class="logo-cpp">++</span></span>
+      </div>
 
-    <div class="muscle-grid" id="muscleSelector">
-        <div class="muscle-card" data-m="صدر" onclick="selectMuscle('صدر', this)">
-            <span class="muscle-icon">🛡️</span>
-            <span class="muscle-name">صدر</span>
+      <!-- User Progress Bar -->
+      <div class="user-hud">
+        <div class="hud-stat">
+          <span class="hud-label">LEVEL</span>
+          <span class="hud-value" id="userLevel">1</span>
         </div>
-        <div class="muscle-card" data-m="ظهر" onclick="selectMuscle('ظهر', this)">
-            <span class="muscle-icon">🦅</span>
-            <span class="muscle-name">ظهر</span>
+        <div class="xp-bar-container">
+          <div class="xp-bar-track">
+            <div class="xp-bar-fill" id="xpBarFill" style="width: 0%"></div>
+          </div>
+          <div class="xp-numbers">
+            <span id="currentXP">0</span> / <span id="maxXP">100</span> XP
+          </div>
         </div>
-        <div class="muscle-card" data-m="رجل" onclick="selectMuscle('رجل', this)">
-            <span class="muscle-icon">🦵</span>
-            <span class="muscle-name">رجل</span>
+        <div class="hud-stat">
+          <span class="hud-label">STREAK</span>
+          <span class="hud-value neon-green" id="streak">0🔥</span>
         </div>
-        <div class="muscle-card" data-m="كتف" onclick="selectMuscle('كتف', this)">
-            <span class="muscle-icon">⚔️</span>
-            <span class="muscle-name">كتف</span>
-        </div>
-        <div class="muscle-card" data-m="ذراع" onclick="selectMuscle('ذراع', this)">
-            <span class="muscle-icon">💪</span>
-            <span class="muscle-name">ذراع</span>
-        </div>
-        <div class="muscle-card" data-m="بطن" onclick="selectMuscle('بطن', this)">
-            <span class="muscle-icon">🍫</span>
-            <span class="muscle-name">بطن</span>
-        </div>
+      </div>
+
+      <!-- Nav -->
+      <nav class="main-nav">
+        <button class="nav-btn active" data-section="errors">🔍 مفسر الأخطاء</button>
+        <button class="nav-btn" data-section="warmup">⚡ Warm-Up</button>
+        <button class="nav-btn" data-section="heavy">💀 Heavy Lifting</button>
+        <button class="nav-btn" data-section="visual">🎨 الخوارزميات</button>
+      </nav>
     </div>
+  </header>
 
-    <div class="input-box">
-        <div class="col">
-            <label>تاريخ التمرين</label>
-            <input type="date" id="exDate">
-        </div>
-        
-        <div class="col">
-            <label>اسم التمرين</label>
-            <input type="text" id="exName" placeholder="مثال: دك بنش مستوي..">
-        </div>
-
-        <div class="row">
-            <div class="col">
-                <label>الوزن (kg)</label>
-                <input type="number" id="exWeight" placeholder="0">
-            </div>
-            <div class="col">
-                <label>العدات</label>
-                <input type="number" id="exReps" placeholder="0">
-            </div>
-        </div>
-
-        <button class="btn-add" onclick="addEntry()">إضافة للسجل 💪</button>
+  <!-- ============================================================
+       HERO: منطقة الترحيب
+  ============================================================ -->
+  <section class="hero-section">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🏆 تحدي اليوم متاح</div>
+      <h1 class="hero-title">
+        <span class="glitch" data-text="تُدرِّب عقلك">تُدرِّب عقلك</span>
+        <br>
+        <span class="neon-accent">كالمحاربين</span>
+      </h1>
+      <p class="hero-sub">حوّل أخطاء C++ إلى نقاط قوة — اكتشف، صحّح، وتفوّق</p>
+      <div class="hero-stats">
+        <div class="stat-pill">📚 6 تحديات</div>
+        <div class="stat-pill">🎯 5 كويز</div>
+        <div class="stat-pill">⚡ نظام XP كامل</div>
+      </div>
     </div>
+    <div class="hero-code-preview">
+      <div class="code-window">
+        <div class="code-window-bar">
+          <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+          <span class="code-window-title">main.cpp</span>
+        </div>
+        <pre class="code-display"><span class="c-keyword">#include</span> <span class="c-string">&lt;iostream&gt;</span>
+<span class="c-keyword">using namespace</span> std;
 
-    <h3 id="listTitle">سجل النشاط العام</h3>
-    <div id="logList"></div>
-</div>
+<span class="c-type">int</span> <span class="c-func">main</span>() {
+  <span class="c-comment">// هل تجد الخطأ؟</span>
+  <span class="c-type">int</span> score = <span class="c-num">0</span>
+  cout &lt;&lt; <span class="c-string">"Level UP!"</span>;
+  <span class="c-keyword">return</span> <span class="c-num">0</span>;
+}</pre>
+      </div>
+    </div>
+  </section>
 
-<script>
-    // جلب البيانات من ذاكرة المتصفح
-    let workoutLog = JSON.parse(localStorage.getItem('monsterGymLog')) || [];
-    let selectedMuscle = "";
+  <!-- ============================================================
+       MAIN CONTENT: الأقسام الأربعة
+  ============================================================ -->
+  <main class="main-content">
 
-    // تعيين التاريخ ليومنا هذا تلقائياً
-    document.getElementById('exDate').valueAsDate = new Date();
+    <!-- ======================================================
+         SECTION 1: مفسر الأخطاء (Error Cards)
+    ====================================================== -->
+    <section id="section-errors" class="content-section active">
+      <div class="section-header">
+        <h2 class="section-title">🔍 مفسر الأخطاء</h2>
+        <p class="section-desc">اكتشف الخطأ في كل كود واكسب XP</p>
+        <div class="progress-pills" id="errorProgress"></div>
+      </div>
+      <div class="cards-grid" id="errorCardsGrid">
+        <!-- تُولَّد بـ JavaScript -->
+      </div>
+    </section>
 
-    // تعريف ألوان النيون لكل عضلة
-    const muscleThemes = {
-        'صدر': '#ff007f', 'ظهر': '#39ff14', 'رجل': '#ff9d00',
-        'كتف': '#bc13fe', 'ذراع': '#00d2ff', 'بطن': '#00ffcc'
-    };
+    <!-- ======================================================
+         SECTION 2: Warm-Up Quiz
+    ====================================================== -->
+    <section id="section-warmup" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">⚡ Warm-Up Quiz</h2>
+        <p class="section-desc">أسئلة سريعة لتسخين العقل</p>
+      </div>
+      <div class="quiz-arena" id="warmupArena">
+        <!-- تُولَّد بـ JavaScript -->
+      </div>
+    </section>
 
-    // وظيفة اختيار العضلة
-    function selectMuscle(muscle, el) {
-        selectedMuscle = muscle;
-        // تحديث شكل البطاقات
-        document.querySelectorAll('.muscle-card').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        
-        // تحديث العنوان وفلترة القائمة
-        document.getElementById('listTitle').innerText = `تمارين عضلة: ${muscle}`;
-        updateUI(muscle);
-    }
+    <!-- ======================================================
+         SECTION 3: Heavy Lifting
+    ====================================================== -->
+    <section id="section-heavy" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">💀 Heavy Lifting</h2>
+        <p class="section-desc">تحديات الخوارزميات الثقيلة — للمحاربين فقط</p>
+        <div class="lock-notice" id="heavyLockNotice">
+          🔒 أكمل 3 تحديات من مفسر الأخطاء لفتح هذا القسم
+        </div>
+      </div>
+      <div class="heavy-container" id="heavyContainer">
+        <!-- تُولَّد بـ JavaScript -->
+      </div>
+    </section>
 
-    // وظيفة إضافة تمرين جديد
-    function addEntry() {
-        const date = document.getElementById('exDate').value;
-        const name = document.getElementById('exName').value.trim();
-        const weight = document.getElementById('exWeight').value;
-        const reps = document.getElementById('exReps').value;
+    <!-- ======================================================
+         SECTION 4: الخوارزميات المرئية
+    ====================================================== -->
+    <section id="section-visual" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">🎨 الدليل المرئي للخوارزميات</h2>
+        <p class="section-desc">انظر كيف تعمل الخوارزميات بالرسوم المتحركة</p>
+        <div class="lock-notice" id="visualLockNotice">
+          🔒 أكمل تحدي Heavy Lifting لفتح الشرح المرئي
+        </div>
+      </div>
+      <div class="visual-grid" id="visualGrid">
+        <!-- تُولَّد بـ JavaScript -->
+      </div>
+    </section>
 
-        if (!selectedMuscle) {
-            alert("اختار العضلة الأول يا وحش! 🏋️‍♂️");
-            return;
-        }
-        if (!name || !weight || !reps) {
-            alert("اكتب اسم التمرين والوزن والعدات");
-            return;
-        }
+  </main>
 
-        // إضافة البيانات في أول القائمة
-        workoutLog.unshift({
-            id: Date.now(),
-            muscle: selectedMuscle,
-            date,
-            name,
-            weight,
-            reps
-        });
+  <!-- ============================================================
+       MODAL: عرض الكود الكامل + الإجابة
+  ============================================================ -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-glass">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
 
-        // حفظ وتحديث
-        saveData();
-        updateUI(selectedMuscle);
-        
-        // مسح الحقول
-        document.getElementById('exName').value = "";
-        document.getElementById('exWeight').value = "";
-        document.getElementById('exReps').value = "";
-    }
+  <!-- ============================================================
+       TOAST: رسائل التحفيز (Neon Style)
+  ============================================================ -->
+  <div class="toast-container" id="toastContainer"></div>
 
-    // وظيفة حذف تمرين
-    function deleteItem(id) {
-        if(confirm("عايز تمسح التمرين ده من السجل؟")) {
-            workoutLog = workoutLog.filter(item => item.id !== id);
-            saveData();
-            updateUI(selectedMuscle);
-        }
-    }
+  <!-- ============================================================
+       WIN OVERLAY: رسالة الفوز
+  ============================================================ -->
+  <div class="win-overlay" id="winOverlay">
+    <div class="win-box">
+      <div class="win-icon">💪</div>
+      <h2 class="win-title">Muscle Gained!</h2>
+      <p class="win-msg" id="winMsg"></p>
+      <div class="win-xp" id="winXP"></div>
+      <button class="btn-primary" id="winClose">استمر في التدريب ⚡</button>
+    </div>
+  </div>
 
-    function saveData() {
-        localStorage.setItem('monsterGymLog', JSON.stringify(workoutLog));
-    }
-
-    // وظيفة تحديث الواجهة
-    function updateUI(filter = "") {
-        const list = document.getElementById('logList');
-        list.innerHTML = "";
-
-        // تصفية البيانات حسب العضلة المختارة (أو عرض الكل)
-        const data = filter ? workoutLog.filter(i => i.muscle === filter) : workoutLog;
-
-        if (data.length === 0) {
-            list.innerHTML = `<div class="empty-msg">لا يوجد سجلات لهذه العضلة حالياً.. ابدأ أول تمرينة!</div>`;
-            return;
-        }
-
-        data.forEach(item => {
-            const color = muscleThemes[item.muscle];
-            const div = document.createElement('div');
-            div.className = 'log-item';
-            div.style.borderRight = `5px solid ${color}`;
-            div.innerHTML = `
-                <div class="log-header">
-                    <span class="log-date">📅 ${item.date}</span>
-                    <span class="log-muscle-tag" style="color:${color}; border-color:${color}">${item.muscle}</span>
-                </div>
-                <span class="log-ex-name">${item.name}</span>
-                <div class="log-details">
-                    وزن: <b>${item.weight}</b> kg &nbsp;&nbsp; | &nbsp;&nbsp; عدات: <b>${item.reps}</b>
-                </div>
-                <button class="delete-btn" onclick="deleteItem(${item.id})">🗑️</button>
-            `;
-            list.appendChild(div);
-        });
-    }
-
-    // التشغيل الأول لإظهار أي بيانات قديمة
-    updateUI();
-</script>
-
+  <!-- Scripts -->
+  <script src="questions.js"></script>
+  <script src="animations.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
